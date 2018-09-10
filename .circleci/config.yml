@@ -54,10 +54,10 @@ jobs:
             export DEPLOYS=$(helm ls --namespace $RELEASE_NAMESPACE | grep $RELEASE | wc -l)
 
             if [ ${DEPLOYS}  -eq 0 ]; then
-                echo "Installing release ${RELEASE_NAME}"
+                echo "Installing release ${RELEASE}"
                 helm install --name $RELEASE_NAME-$RELEASE_ENVIRONMENT $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             else 
-                echo "Upgrading release ${RELEASE_NAME}"
+                echo "Upgrading release ${RELEASE}"
                 helm upgrade $RELEASE_NAME-$RELEASE_ENVIRONMENT $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             fi    
   deploy_qa:
@@ -90,7 +90,7 @@ jobs:
                 echo "Installing release ${RELEASE}"
                 helm install --name $RELEASE $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             else 
-                echo "Upgrading release ${RELEASE_NAME}"
+                echo "Upgrading release ${RELEASE}"
                 helm upgrade $RELEASE $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             fi  
 workflows:
