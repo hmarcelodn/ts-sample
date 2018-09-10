@@ -84,12 +84,11 @@ jobs:
 
             if [ ${DEPLOYS}  -eq 0 ]; then
                 echo "Installing release ${RELEASE_NAME}"
-                helm install --name=${RELEASE_NAME} $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace=${RELEASE_NAMESPACE}
+                helm install --name $RELEASE_NAME $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             else 
                 echo "Upgrading release ${RELEASE_NAME}"
-                helm upgrade $RELEASE_NAME $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace=${RELEASE_NAMESPACE}
+                helm upgrade $RELEASE_NAME $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             fi  
-
 workflows:
   version: 2
   build_and_deploy:
