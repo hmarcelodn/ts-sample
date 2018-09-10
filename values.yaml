@@ -13,7 +13,7 @@ image:
   # It has to be one of the following values ["Always", "IfNotPresent", "Never"]
   pullPolicy: Always
   containerPort: 8000
-  pullSecret: None
+  pullSecret: {}
   revisionHistoryLimit: 3
 
 # When running a worker specify its module and worker file name
