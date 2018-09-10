@@ -33,12 +33,31 @@ jobs:
         auth:
           username: $QUAY_USERNAME
           password: $QUAY_PASSWORD
+        environment:
+          S3_BUCKET: s6-kubernetes-charts
+          HELM_REPO_NAME: s6
+          HELM_CHART_NAME: ts-backend-chart
+          RELEASE_NAME: sample
+          RELEASE_NAMESPACE: default
     steps:
       - checkout   
       - run:
           name: Deploying to Development Environment
           command: |
-            kubectl get pods --all-namespaces          
+            helm init --client-only
+            helm plugin install https://github.com/hypnoglow/helm-s3.git
+            helm repo add s6 s3://${S3_BUCKET}
+            helm repo update
+
+            export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
+
+            if [ ${DEPLOYS}  -eq 0 ]; then
+                echo "Installing release ${RELEASE_NAME}"
+                helm install --name=${RELEASE_NAME} $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --namespace=${RELEASE_NAMESPACE}
+            else 
+                echo "Upgrading release ${RELEASE_NAME}"
+                helm upgrade $RELEASE_NAME $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --namespace=${RELEASE_NAMESPACE}
+            fi                    
 workflows:
   version: 2
   build_and_deploy:

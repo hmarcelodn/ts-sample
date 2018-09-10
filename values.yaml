@@ -1,0 +1,69 @@
+---
+
+# Name of pod
+name: sample
+
+# Number of pods replicated (user more than 1 for rolling update)
+replicas: 3
+
+# Image/Container Configuration
+image:
+  repository: quay.io/marcelo_delnegro/sample
+  tag: latest
+  # It has to be one of the following values ["Always", "IfNotPresent", "Never"]
+  pullPolicy: Always
+  containerPort: 8000
+  pullSecret: None
+  revisionHistoryLimit: 3
+
+# When running a worker specify its module and worker file name
+command: {}
+  # WARNING: Remove {} and uncomment below configuration
+  # - command
+  # - arg0
+  # - arg1
+
+# Service Configuration
+service:
+  name: sample
+  protocol: TCP
+  port: 8000
+  targetPort: 8000
+
+# LivenessProbe
+livenessProbe: {}
+  # path: /healthz
+  # port: 8000
+
+# Labels
+labels:
+  app: sample
+  component: sample
+
+# Environment Variables Configuration
+environment:
+  # Configure environment variables from Secrets
+  secret: {}
+    # WARNING: Remove {} and uncomment below configuration
+    # <ENVIRONMENT_VARIABLE_NAME>: 
+    #   secret: <SECRET_NAME>
+    #   name: <ENVIRONMENT_VARIABLE_NAME>
+  # Configure environment variables from plain values
+  plain: {}
+    # WARNING: Remove {} and uncomment below configuration
+    # Plain environment variables
+    # <ENVIRONMENT_VARIABLE_NAME>:
+    #   value: <PLAIN_VALUE>
+  # Configure environment variables from configmaps
+  configMap: {}
+    # WARNING: Remove {} and uncomment below configuration
+    # Config Map environment variables
+    # <ENVIRONMENT_VARIABLE_NAME>: 
+    #   config: <CONFIG_MAP_NAME>
+    #   name: <CONFIG_MAP_KEY>    
+
+autoscaling: {}
+  # WARNING: Remove {} and uncomment below configuration
+  # minReplicas: 1
+  # maxReplicas: 3
+  # targetCpu: 50
