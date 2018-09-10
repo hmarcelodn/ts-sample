@@ -39,6 +39,7 @@ jobs:
           HELM_CHART_NAME: ts-backend-chart
           RELEASE_NAME: sample
           RELEASE_NAMESPACE: default
+          RELEASE_SUFFIX: dev
     steps:
       - checkout   
       - run:
@@ -49,14 +50,15 @@ jobs:
             helm repo add s6 s3://${S3_BUCKET}
             helm repo update
 
-            export DEPLOYS=$(helm ls --namespace $RELEASE_NAMESPACE | grep $RELEASE_NAME | wc -l)
+            export RELEASE=$RELEASE_NAME-$RELEASE_ENVIRONMENT
+            export DEPLOYS=$(helm ls --namespace $RELEASE_NAMESPACE | grep $RELEASE | wc -l)
 
             if [ ${DEPLOYS}  -eq 0 ]; then
                 echo "Installing release ${RELEASE_NAME}"
-                helm install --name $RELEASE_NAME $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
+                helm install --name $RELEASE_NAME-$RELEASE_ENVIRONMENT $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             else 
                 echo "Upgrading release ${RELEASE_NAME}"
-                helm upgrade $RELEASE_NAME $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
+                helm upgrade $RELEASE_NAME-$RELEASE_ENVIRONMENT $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             fi    
   deploy_qa:
     docker:
@@ -70,6 +72,7 @@ jobs:
           HELM_CHART_NAME: ts-backend-chart
           RELEASE_NAME: sample
           RELEASE_NAMESPACE: qa
+          RELEASE_SUFFIX: qa
     steps:
       - checkout   
       - run:
@@ -80,14 +83,15 @@ jobs:
             helm repo add s6 s3://${S3_BUCKET}
             helm repo update
 
-            export DEPLOYS=$(helm ls --namespace $RELEASE_NAMESPACE | grep $RELEASE_NAME | wc -l)
+            export RELEASE=$RELEASE_NAME-$RELEASE_ENVIRONMENT
+            export DEPLOYS=$(helm ls --namespace $RELEASE_NAMESPACE | grep $RELEASE | wc -l)
 
             if [ ${DEPLOYS}  -eq 0 ]; then
-                echo "Installing release ${RELEASE_NAME}"
-                helm install --name $RELEASE_NAME $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
+                echo "Installing release ${RELEASE}"
+                helm install --name $RELEASE $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             else 
                 echo "Upgrading release ${RELEASE_NAME}"
-                helm upgrade $RELEASE_NAME $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
+                helm upgrade $RELEASE $HELM_REPO_NAME/$HELM_CHART_NAME -f values.yaml --set image.tag=$CIRCLE_SHA1 --namespace $RELEASE_NAMESPACE
             fi  
 workflows:
   version: 2
