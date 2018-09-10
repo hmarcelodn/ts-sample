@@ -8,7 +8,7 @@ jobs:
     docker:
       - image: circleci/python:3.6.1
         environment:
-          IMAGE_NAME: sample
+          IMAGE_NAME: marcelo_delnegro/sample
     working_directory: ~/repo
     steps:
       - checkout
@@ -27,8 +27,9 @@ jobs:
       - run:
           name: Build and Push Docker Image
           command: |
-            docker build -t quay.io/$IMAGE_NAME:$CIRCLE_BUILD_NUM .
             echo $DOCKER_PASSWORD | docker login quay.io -u $DOCKER_LOGIN --password-stdin
+            docker build -t quay.io/$IMAGE_NAME:$CIRCLE_BUILD_NUM .            
+            docker push quay.io/$IMAGE_NAME:$CIRCLE_BUILD_NUM
   deploy_development:
     docker:
       - image: quay.io/sentinelsix/ts-docker-deployment-dev
