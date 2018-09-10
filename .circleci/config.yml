@@ -1,0 +1,48 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+        environment:
+          IMAGE_NAME: sample
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          - v1-dependencies-
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt            
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            docker build -t quay.io/$IMAGE_NAME:$CIRCLE_BUILD_NUM .
+            echo $DOCKER_PASSWORD | docker login quay.io -u $DOCKER_LOGIN --password-stdin
+  deploy_development:
+    docker:
+      - image: quay.io/sentinelsix/ts-docker-deployment-dev
+        auth:
+          username: $QUAY_USERNAME
+          password: $QUAY_PASSWORD
+    steps:
+      run:
+        name: Deploying to Development Environment
+        command: |
+          kubectl get pods, deployments          
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy_development
