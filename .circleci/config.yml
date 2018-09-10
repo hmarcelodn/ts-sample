@@ -50,7 +50,7 @@ jobs:
             helm repo add s6 s3://${S3_BUCKET}
             helm repo update
 
-            export RELEASE=$RELEASE_NAME-$RELEASE_ENVIRONMENT
+            export RELEASE=$RELEASE_NAME-$RELEASE_SUFFIX
             export DEPLOYS=$(helm ls --namespace $RELEASE_NAMESPACE | grep $RELEASE | wc -l)
 
             if [ ${DEPLOYS}  -eq 0 ]; then
@@ -83,7 +83,7 @@ jobs:
             helm repo add s6 s3://${S3_BUCKET}
             helm repo update
 
-            export RELEASE=$RELEASE_NAME-$RELEASE_ENVIRONMENT
+            export RELEASE=$RELEASE_NAME-$RELEASE_SUFFIX
             export DEPLOYS=$(helm ls --namespace $RELEASE_NAMESPACE | grep $RELEASE | wc -l)
 
             if [ ${DEPLOYS}  -eq 0 ]; then
