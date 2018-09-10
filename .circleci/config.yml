@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Build and Push Docker Image
           command: |
-            docker login quay.io -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+            docker login quay.io -u $QUAY_USERNAME -p $QUAY_PASSWORD
             docker build -t quay.io/$IMAGE_NAME:$CIRCLE_BUILD_NUM .            
             docker push quay.io/$IMAGE_NAME:$CIRCLE_BUILD_NUM
   deploy_development:
