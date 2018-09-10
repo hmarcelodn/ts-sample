@@ -97,9 +97,11 @@ workflows:
       - build
       - deploy_development:
           requires:
-            - build        
+            - build
+      - approval_qa:
+          type: approval        
       - deploy_qa:
-          type: approval
           requires:
             - build
             - deploy_development
+            - approval_qa
